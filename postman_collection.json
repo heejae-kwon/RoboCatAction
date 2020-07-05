@@ -1,0 +1,2113 @@
+{
+	"info": {
+		"_postman_id": "26a72600-b07e-46f8-b304-702073d655fc",
+		"name": "RoboCatLoginServer postman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Creating a user with POST on users/",
+			"item": [
+				{
+					"name": "Create a new user succeeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5fbba59e-9677-47cc-8f62-5e7a4f5002f7",
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a user ID', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.equal(pm.environment.get(\"testUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the password', function() {\r",
+									"    pm.expect(jsonData).to.have.property('password');\r",
+									"    pm.expect(jsonData.password).to.equal(pm.environment.get(\"testPassword\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.equal(pm.environment.get(\"testAvatar\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('ID is not the same as the username', function() {\r",
+									"    pm.expect(jsonData.username).to.not.equal(jsonData.id);\r",
+									"});\r",
+									"\r",
+									"pm.test('ID is not the same as the password', function() {\r",
+									"    pm.expect(jsonData.password).to.not.equal(jsonData.id);\r",
+									"});\r",
+									"\r",
+									"pm.test('ID is not the same as the avatar', function() {\r",
+									"    pm.expect(jsonData.avatar).to.not.equal(jsonData.id);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"userId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "31ec21a2-e32c-4b78-b79f-4cb810aabe35",
+								"exec": [
+									"var digits = '' + Math.floor((Math.random() * 100000));",
+									"pm.environment.set(\"testUser\", \"user\" + digits);",
+									"pm.environment.set(\"testPassword\", \"password\" + digits);",
+									"pm.environment.set(\"testAvatar\", \"avi\" + digits);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/"
+					},
+					"response": []
+				},
+				{
+					"name": "Create second user succeeds with unique ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8188d952-dac0-4259-8a40-526740336cbb",
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a user ID', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the correct username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.equal(pm.environment.get(\"otherUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"otherUserId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "51f2d5bf-827c-4500-84c1-b3cad215732c",
+								"exec": [
+									"var digits = '' + Math.floor(Math.random() * 100000);",
+									"pm.environment.set(\"otherUser\", \"user\" + digits);",
+									"pm.environment.set(\"otherPassword\", \"password\" + digits);",
+									"pm.environment.set(\"otherAvatar\", \"avi\" + digits);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{otherUser}}\",\n\"password\": \"{{otherPassword}}\",\n\"avatar\": \"{{otherAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/"
+					},
+					"response": []
+				},
+				{
+					"name": "Create duplicate user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5fbba59e-9677-47cc-8f62-5e7a4f5002f7",
+								"exec": [
+									"pm.test(\"status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "31ec21a2-e32c-4b78-b79f-4cb810aabe35",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Login with POST to login/",
+			"item": [
+				{
+					"name": "Log in with the first user succeeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "afe0b583-2fef-4427-924d-070a0f635a84",
+								"exec": [
+									"let jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a session', function() {\r",
+									"    pm.expect(jsonData).to.have.property('session');\r",
+									"    pm.expect(jsonData.session).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a token', function() {\r",
+									"    pm.expect(jsonData).to.have.property('token');\r",
+									"    pm.expect(jsonData.token).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('token and session should not be the same', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(jsonData.session);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"session\", jsonData.session);\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login succeeds with a unique session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "afe0b583-2fef-4427-924d-070a0f635a84",
+								"exec": [
+									"let jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a session', function() {\r",
+									"    pm.expect(jsonData).to.have.property('session');\r",
+									"    pm.expect(jsonData.session).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a token', function() {\r",
+									"    pm.expect(jsonData).to.have.property('token');\r",
+									"    pm.expect(jsonData.token).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('token and session should not be the same', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(jsonData.session);\r",
+									"});\r",
+									"\r",
+									"pm.test('session should not match the first user session', function() {\r",
+									"    pm.expect(jsonData.session).to.not.be.equal(pm.environment.get(\"session\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('token should not match the first user token', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(pm.environment.get(\"token\"));\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"otherSession\", jsonData.session);\r",
+									"pm.environment.set(\"otherToken\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{otherUser}}\",\n\"password\": \"{{otherPassword}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login fails with bad password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "afe0b583-2fef-4427-924d-070a0f635a84",
+								"exec": [
+									"pm.test(\"status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}{{testPassword}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login fails with bad username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "afe0b583-2fef-4427-924d-070a0f635a84",
+								"exec": [
+									"pm.test(\"status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{testUser}}{{testUser}}\",\n\"password\": \"{{testPassword}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/login"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Retrieve a user by ID with GET on users/:id",
+			"item": [
+				{
+					"name": "Retrieving the same user succeeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"userId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.eql(pm.environment.get(\"testUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test password', function() {\r",
+									"    pm.expect(jsonData).to.have.property('password');\r",
+									"    pm.expect(jsonData.password).to.eql(pm.environment.get(\"testPassword\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.eql(pm.environment.get(\"testAvatar\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieving a different user succeeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return other user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"otherUserId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return other username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.eql(pm.environment.get(\"otherUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return other avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.eql(pm.environment.get(\"otherAvatar\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should not return other password', function() {\r",
+									"    pm.expect(jsonData).not.to.have.property('password');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{otherUserId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieving fails with no session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieving fails with bad session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieving fails with bad token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieving fails with bad ID (valid session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/xxx{{otherUserId}}xxx"
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieving fails with bad ID (bad session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/xxx{{otherUserId}}xxx"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Searching for a user by name with GET on users",
+			"item": [
+				{
+					"name": "Searching for self succeeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b34d0f3-74f6-41bf-95df-714800447e47",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"userId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.eql(pm.environment.get(\"testUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.eql(pm.environment.get(\"testAvatar\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user password', function() {\r",
+									"    pm.expect(jsonData).to.have.property('password');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{testUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{testUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching for a different user succeeds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b34d0f3-74f6-41bf-95df-714800447e47",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return other user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"otherUserId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return other username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.eql(pm.environment.get(\"otherUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return other avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.eql(pm.environment.get(\"otherAvatar\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should not return other password', function() {\r",
+									"    pm.expect(jsonData).not.to.have.property('password');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{otherUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{otherUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching fails with no session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a597233c-bf81-4a80-8acd-58ee0a7bfb24",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "fff2639d-1617-4d93-b35c-59a5ac76f44e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{otherUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{otherUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching fails with bad session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a597233c-bf81-4a80-8acd-58ee0a7bfb24",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "fff2639d-1617-4d93-b35c-59a5ac76f44e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{otherUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{otherUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching fails with bad token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58defca1-0a4a-48c2-af84-db53c0a99460",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{otherUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{otherUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching fails with bad username (valid session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username=xx{{testUser}}xx",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "xx{{testUser}}xx"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching fails with bad username (bad session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username=xx{{testUser}}xx",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "xx{{testUser}}xx"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Searching fails with no username (valid session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"pm.test(\"status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Updating a user by ID with PUT on users/:id",
+			"item": [
+				{
+					"name": "Updating succeeds with new data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the new username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.equal(pm.environment.get(\"newUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the new password', function() {\r",
+									"    pm.expect(jsonData).to.have.property('password');\r",
+									"    pm.expect(jsonData.password).to.equal(pm.environment.get(\"newPassword\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the new avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.equal(pm.environment.get(\"newAvatar\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									"var digits = '' + Math.floor((Math.random() * 100000));",
+									"pm.environment.set(\"newUser\", \"user\" + digits);",
+									"pm.environment.set(\"newPassword\", \"password\" + digits);",
+									"pm.environment.set(\"newAvatar\", \"avi\" + digits);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\",\n\"username\": \"{{newUser}}\",\n\"password\": \"{{newPassword}}\",\n\"avatar\": \"{{newAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Updating fails on different user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\",\n\"avatar\": \"{{newAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{otherUserId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Updating fails with no session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Updating fails with bad session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\",\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Updating fails with bad token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\",\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Updating fails with bad username (valid session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\",\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/xx{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Updating fails with bad username (bad session)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\",\n\"username\": \"{{testUser}}\",\n\"password\": \"{{testPassword}}\",\n\"avatar\": \"{{testAvatar}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/xx{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Changes to first user persist after failed calls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"userId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return new username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.eql(pm.environment.get(\"newUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return new password', function() {\r",
+									"    pm.expect(jsonData).to.have.property('password');\r",
+									"    pm.expect(jsonData.password).to.eql(pm.environment.get(\"newPassword\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return new avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.eql(pm.environment.get(\"newAvatar\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{userId}}"
+					},
+					"response": []
+				},
+				{
+					"name": "No changes to other user after failed calls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f63de251-2c52-4ea8-b45a-7f8183cddb64",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"otherUserId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return original username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.eql(pm.environment.get(\"otherUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return original avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.eql(pm.environment.get(\"otherAvatar\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should not return password', function() {\r",
+									"    pm.expect(jsonData).to.not.have.property('password');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/users/{{otherUserId}}"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Connecting to a game server with POST to connect/",
+			"item": [
+				{
+					"name": "Connecting succeeds with a valid session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the (new) username', function() {\r",
+									"    pm.expect(jsonData).to.have.property('username');\r",
+									"    pm.expect(jsonData.username).to.equal(pm.environment.get(\"newUser\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the (new)) avatar', function() {\r",
+									"    pm.expect(jsonData).to.have.property('avatar');\r",
+									"    pm.expect(jsonData.avatar).to.equal(pm.environment.get(\"newAvatar\"));\r",
+									"});\r",
+									"\r",
+									"pm.test('should return the server', function() {\r",
+									"    pm.expect(jsonData).to.have.property('server');\r",
+									"    pm.expect(jsonData.server).to.equal(pm.collectionVariables.get(\"game_server\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/connect"
+					},
+					"response": []
+				},
+				{
+					"name": "Connecting fails with no session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/connect"
+					},
+					"response": []
+				},
+				{
+					"name": "Connecting fails with an bad session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/connect"
+					},
+					"response": []
+				},
+				{
+					"name": "Connecting fails with an bad token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7ec6c8b-ed43-4680-947c-6e642aba6a68",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9747be8c-76b4-432d-9833-83e1f1637006",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}{{token}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/connect"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Expiring a Session",
+			"item": [
+				{
+					"name": "Authenticated request fails after more than 10 seconds from login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b34d0f3-74f6-41bf-95df-714800447e47",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "857a6662-56ab-45a0-bdf8-b6a120f5833e",
+								"exec": [
+									"// wait 10 seconds (in milliseconds)",
+									"setTimeout(function(){}, 10000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{newUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{newUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Re-log in with the first user succeeds again with a new token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "afe0b583-2fef-4427-924d-070a0f635a84",
+								"exec": [
+									"let jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a session', function() {\r",
+									"    pm.expect(jsonData).to.have.property('session');\r",
+									"    pm.expect(jsonData.session).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a token', function() {\r",
+									"    pm.expect(jsonData).to.have.property('token');\r",
+									"    pm.expect(jsonData.token).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('token and session should not be the same', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(jsonData.session);\r",
+									"});\r",
+									"\r",
+									"pm.test('token should not match the previous one', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(pm.environment.get(\"token\"));\r",
+									"});\r",
+									"\r",
+									"// update the session and token with the new value\r",
+									"pm.environment.set(\"session\", jsonData.session);\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{newUser}}\",\n\"password\": \"{{newPassword}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticated request succeeds after fresh log-in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b34d0f3-74f6-41bf-95df-714800447e47",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return test user id', function() {\r",
+									"    pm.expect(jsonData).to.have.property('id');\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get(\"userId\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{session}}\",\n\"token\": \"{{token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{newUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{newUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Prep: re-log in with the first user to invalidate the previous",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "afe0b583-2fef-4427-924d-070a0f635a84",
+								"exec": [
+									"let jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a session', function() {\r",
+									"    pm.expect(jsonData).to.have.property('session');\r",
+									"    pm.expect(jsonData.session).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('should return a token', function() {\r",
+									"    pm.expect(jsonData).to.have.property('token');\r",
+									"    pm.expect(jsonData.token).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test('token and session should not be the same', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(jsonData.session);\r",
+									"});\r",
+									"\r",
+									"pm.test('token should not match the previous one', function() {\r",
+									"    pm.expect(jsonData.token).to.not.be.equal(pm.environment.get(\"token\"));\r",
+									"});\r",
+									"\r",
+									"// store the old session data as \"oldSession\"\r",
+									"pm.environment.set(\"oldSession\", pm.environment.get(\"session\"));\r",
+									"pm.environment.set(\"oldToken\", pm.environment.get(\"token\"));\r",
+									"\r",
+									"// update the session and token with the new value\r",
+									"pm.environment.set(\"session\", jsonData.session);\r",
+									"pm.environment.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"username\": \"{{newUser}}\",\n\"password\": \"{{newPassword}}\"\n}"
+						},
+						"url": "http://{{address}}:{{port}}/api/v1/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticated request fails with an old valid session/token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b34d0f3-74f6-41bf-95df-714800447e47",
+								"exec": [
+									"pm.test(\"status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "857a6662-56ab-45a0-bdf8-b6a120f5833e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"session\": \"{{oldSession}}\",\n\"token\": \"{{oldToken}}\"\n}"
+						},
+						"url": {
+							"raw": "http://{{address}}:{{port}}/api/v1/users?username={{newUser}}",
+							"protocol": "http",
+							"host": [
+								"{{address}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{newUser}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f6487232-676a-4631-9c00-fed6fc77a037",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "327ec144-d403-41cd-ba2c-4eb36a9d1277",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0110a3e6-31ec-45c8-90c5-3a86546cde83",
+			"key": "port",
+			"value": "3100",
+			"type": "string"
+		},
+		{
+			"id": "f9be068f-bfb3-4792-b0b3-26915e358801",
+			"key": "address",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"id": "c53c0ea9-2090-4dff-a15b-c601ff10253d",
+			"key": "game_server",
+			"value": "127.0.0.1:3300",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
