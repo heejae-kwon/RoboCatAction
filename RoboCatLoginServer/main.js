@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-vars */
 
 'use strict';
-/** main file of CS261 assignment 2. */
 const express = require('express');
 const Router = require('./routes/router.js');
 const userDB = require('./userDatabase.js');

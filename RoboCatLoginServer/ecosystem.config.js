@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
-    name: 'assignment4',
-    script: 'assignment4.js',
+    name: 'main',
+    script: 'main.js',
 
     // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
     args: 'one two',
@@ -13,7 +13,7 @@ module.exports = {
       NODE_ENV: 'development',
       MONGO_IP: 'mongodb://localhost',
       MONGO_PORT: 27017,
-      MONGO_NAME: 'assignment4',
+      MONGO_NAME: 'mongo',
       REDIS_IP: '127.0.0.1',
       REDIS_PORT: 6379,
       EXPRESS_PORT: 3100,
